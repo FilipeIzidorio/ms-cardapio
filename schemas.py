@@ -35,9 +35,9 @@ class CardapioPartialUpdate(BaseModel):
     turno: Optional[TurnoEnum] = None
 
 class CardapioOut(CardapioBase):
-    id: str  # UUID em string
+    id: int  # agora é int sequencial
     class Config:
-        from_attributes = True  # substitui o antigo orm_mode
+        from_attributes = True
 
 # ---- Integração opcional com MS2 (prepare) ----
 class ItemPreparar(BaseModel):

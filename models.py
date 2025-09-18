@@ -1,6 +1,4 @@
-import uuid
-from sqlalchemy import Column, String, Date, Enum, UniqueConstraint
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, String, Date, Enum, UniqueConstraint, Integer
 from database import Base
 import enum
 
@@ -12,7 +10,7 @@ class TurnoEnum(str, enum.Enum):
 class Cardapio(Base):
     __tablename__ = "cardapios"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(Integer, primary_key=True, autoincrement=True)  # Sequencial
     data = Column(Date, nullable=False)
     prato_principal = Column(String, nullable=False)
     acompanhamento = Column(String, nullable=False)

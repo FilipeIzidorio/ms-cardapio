@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
-from uuid import UUID
 from datetime import date
 from typing import Optional, List
 
@@ -90,7 +89,7 @@ def listar_cardapios(
     summary="Detalhar cardápio",
     description="Retorna os detalhes de um cardápio pelo ID."
 )
-def detalhar_cardapio(id: UUID, db: Session = Depends(get_db)):
+def detalhar_cardapio(id: int, db: Session = Depends(get_db)):
     cardapio = db.query(Cardapio).filter(Cardapio.id == id).first()
     if not cardapio:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cardápio não encontrado")
@@ -103,7 +102,7 @@ def detalhar_cardapio(id: UUID, db: Session = Depends(get_db)):
     summary="Atualizar cardápio (inteiro)",
     description="Atualiza todos os campos de um cardápio existente."
 )
-def atualizar_cardapio(id: UUID, payload: CardapioUpdate, db: Session = Depends(get_db)):
+def atualizar_cardapio(id: int, payload: CardapioUpdate, db: Session = Depends(get_db)):
     card = db.query(Cardapio).filter(Cardapio.id == id).first()
     if not card:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cardápio não encontrado")
@@ -131,7 +130,7 @@ def atualizar_cardapio(id: UUID, payload: CardapioUpdate, db: Session = Depends(
     summary="Atualizar cardápio (parcial)",
     description="Atualiza apenas os campos enviados no corpo da requisição."
 )
-def atualizar_cardapio_parcial(id: UUID, payload: CardapioPartialUpdate, db: Session = Depends(get_db)):
+def atualizar_cardapio_parcial(id: int, payload: CardapioPartialUpdate, db: Session = Depends(get_db)):
     card = db.query(Cardapio).filter(Cardapio.id == id).first()
     if not card:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cardápio não encontrado")
@@ -163,7 +162,7 @@ def atualizar_cardapio_parcial(id: UUID, payload: CardapioPartialUpdate, db: Ses
     summary="Remover cardápio",
     description="Remove um cardápio existente."
 )
-def remover_cardapio(id: UUID, db: Session = Depends(get_db)):
+def remover_cardapio(id: int, db: Session = Depends(get_db)):
     card = db.query(Cardapio).filter(Cardapio.id == id).first()
     if not card:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cardápio não encontrado")
@@ -200,14 +199,14 @@ def cardapio_hoje(
     summary="Preparar cardápio (baixa de estoque)",
     description="Inicia o processo de preparação do cardápio, acionando a baixa de estoque no MS2."
 )
-def preparar_cardapio(id: UUID, body: PrepararRequest, db: Session = Depends(get_db)):
+def preparar_cardapio(id: int, body: PrepararRequest, db: Session = Depends(get_db)):
     card = db.query(Cardapio).filter(Cardapio.id == id).first()
     if not card:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cardápio não encontrado")
 
     return {
         "mensagem": "Processo de preparação iniciado",
-        "cardapio_id": str(id),
+        "cardapio_id": id,
         "itens": [i.model_dump() for i in body.itens]
     }
 
