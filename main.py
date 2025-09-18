@@ -60,19 +60,16 @@ def criar_cardapio(cardapio: CardapioCreate, db: Session = Depends(get_db)):
     db.refresh(novo)
     return novo
 
-
 @app.get(
-    BASE_ROUTE + "/",
+    BASE_ROUTE + "/listar",
     response_model=List[CardapioOut],
     summary="Listar cardápios",
-    description="Lista cardápios com filtros por data/turno e suporte a paginação."
+    description="Lista todos os cardápios, com filtros opcionais por data e turno."
 )
 def listar_cardapios(
     db: Session = Depends(get_db),
     data: Optional[date] = Query(None, description="Data do cardápio"),
-    turno: Optional[TurnoEnum] = Query(None, description="Turno (manhã/tarde/noite)"),
-    pagina: int = Query(1, ge=1, description="Número da página"),
-    tamanho: int = Query(10, ge=1, le=100, description="Itens por página")
+    turno: Optional[TurnoEnum] = Query(None, description="Turno (manhã/tarde/noite)")
 ):
     query = db.query(Cardapio)
     if data:
@@ -80,8 +77,7 @@ def listar_cardapios(
     if turno:
         query = query.filter(Cardapio.turno == turno)
 
-    itens = query.offset((pagina - 1) * tamanho).limit(tamanho).all()
-    return itens
+    return query.all()
 
 
 @app.get(
