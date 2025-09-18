@@ -7,7 +7,7 @@ from database import Base, engine, SessionLocal
 from models import Cardapio, TurnoEnum
 from schemas import (
     CardapioCreate, CardapioUpdate, CardapioPartialUpdate,
-    CardapioOut, PrepararRequest
+    CardapioOut
 )
 
 app = FastAPI(
@@ -36,6 +36,7 @@ def get_db():
 BASE_ROUTE = "/api/v1/cardapios"
 
 # ---------- CRUD ----------
+
 @app.post(
     BASE_ROUTE + "/",
     response_model=CardapioOut,
@@ -81,6 +82,30 @@ def listar_cardapios(
 
     itens = query.offset((pagina - 1) * tamanho).limit(tamanho).all()
     return itens
+
+
+@app.get(
+    BASE_ROUTE + "/hoje",
+    response_model=List[CardapioOut],
+    summary="Cardápios de hoje",
+    description="Retorna todos os cardápios do dia corrente. Se informado, filtra por turno."
+)
+def cardapios_hoje(
+    turno: Optional[TurnoEnum] = Query(None, description="Turno (manhã/tarde/noite)"),
+    db: Session = Depends(get_db)
+):
+    hoje = date.today()
+    query = db.query(Cardapio).filter(Cardapio.data == hoje)
+    if turno:
+        query = query.filter(Cardapio.turno == turno)
+
+    cardapios = query.all()
+    if not cardapios:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Nenhum cardápio encontrado para hoje"
+        )
+    return cardapios
 
 
 @app.get(
@@ -170,45 +195,6 @@ def remover_cardapio(id: int, db: Session = Depends(get_db)):
     db.delete(card)
     db.commit()
     return
-
-
-@app.get(
-    BASE_ROUTE + "/hoje",
-    response_model=CardapioOut,
-    summary="Cardápio de hoje",
-    description="Retorna o cardápio do dia corrente. Se informado, filtra por turno."
-)
-def cardapio_hoje(
-    turno: Optional[TurnoEnum] = Query(None, description="Turno (manhã/tarde/noite)"),
-    db: Session = Depends(get_db)
-):
-    hoje = date.today()
-    query = db.query(Cardapio).filter(Cardapio.data == hoje)
-    if turno is not None:
-        query = query.filter(Cardapio.turno == turno)
-
-    card = query.first()
-    if not card:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nenhum cardápio encontrado para hoje")
-    return card
-
-
-@app.post(
-    BASE_ROUTE + "/{id}/preparar",
-    status_code=status.HTTP_202_ACCEPTED,
-    summary="Preparar cardápio (baixa de estoque)",
-    description="Inicia o processo de preparação do cardápio, acionando a baixa de estoque no MS2."
-)
-def preparar_cardapio(id: int, body: PrepararRequest, db: Session = Depends(get_db)):
-    card = db.query(Cardapio).filter(Cardapio.id == id).first()
-    if not card:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cardápio não encontrado")
-
-    return {
-        "mensagem": "Processo de preparação iniciado",
-        "cardapio_id": id,
-        "itens": [i.model_dump() for i in body.itens]
-    }
 
 
 if __name__ == "__main__":
