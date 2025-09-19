@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, Query, status
+from fastapi import FastAPI, Depends, HTTPException, Query, status, Request
 from sqlalchemy.orm import Session
 from datetime import date
 from typing import Optional, List
@@ -9,6 +9,9 @@ from schemas import (
     CardapioCreate, CardapioUpdate, CardapioPartialUpdate,
     CardapioOut
 )
+import requests
+
+AUTH_URL = "http://a367af721df9.ngrok-free.app/api/v1/auth/validate-token/"
 
 app = FastAPI(
     title="MS1 - Cardápios",
@@ -16,13 +19,50 @@ app = FastAPI(
     description="Microsserviço responsável pela gestão de cardápios diários (MS1)."
 )
 
-# Cria tabelas (apenas desenvolvimento)
+
+@app.middleware("http")
+async def auth_filter(request: Request, call_next):
+    # Rotas que não exigem token
+    rotas_publicas = ["/", "/docs", "/openapi.json"]
+    if request.url.path in rotas_publicas:
+        return await call_next(request)
+
+    token = request.headers.get("Authorization")
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token não fornecido"
+        )
+
+    try:
+        # Faz chamada ao serviço de autenticação
+        headers = {"Authorization": token}
+        response = requests.get(AUTH_URL, headers=headers)
+
+        if 200 <= response.status_code < 300:
+            # Se quiser, salva as infos do usuário no request.state
+            try:
+                request.state.user = response.json()
+            except Exception:
+                request.state.user = None
+            return await call_next(request)
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token inválido"
+            )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Erro ao validar token"
+        )
+
+
+
+
+# BANCO
 Base.metadata.create_all(bind=engine)
 
-
-@app.get("/")
-def root():
-    return {"status": "ok"}
 
 
 def get_db():

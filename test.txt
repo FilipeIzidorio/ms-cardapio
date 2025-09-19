@@ -15,3 +15,17 @@ Criar cardápio (POST /api/v1/cardapios/):
   "bebida": "Suco de laranja",
   "turno": "manha"
 }
+
+{
+  "data": "2025-09-18",
+  "prato_principal": "Arroz de forno",
+  "acompanhamento": "Batata assada",
+  "salada": "Alface, tomate e cenoura ralada",
+  "sobremesa": "Mousse de maracujá",
+  "bebida": "Suco de laranja natural",
+  "turno": "manha"
+}
+
+
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiYWZkYTkzNDllZTE1YzkzOGMxMGRiNWMyNjY0OGI2NTYwM2E0ZDgwZmQ4ZTVlZGE1N2IwNjlhNDk2ZjNhZDRhNzY2ZDg1NmEwNTBiMjE1ZDU0MmY4NWUwNjBjODc5ZDRhMjZhNjE5ZTlhZTc3ZDQ2MjI3Nzk2M2FkYjZkZGJhYTIifQ.ZS-gPmtz56Dp45H13jq4SGxsixywKHkei8jG8XHsbdY
