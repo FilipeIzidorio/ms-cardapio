@@ -1,4 +1,4 @@
-1) Subir servidor: uvicorn main:app --reload
+    1) Subir servidor: uvicorn main:app --reload
 
 
 2) Abrir o Swagger: http://localhost:8000/docs ou http://127.0.0.1:8000/docs#/
