@@ -133,7 +133,7 @@ def cardapios_hoje(
     hoje = date.today()
     query = db.query(Cardapio).filter(Cardapio.data == hoje)
     if turno:
-        query = query.filter(Cardapio.turno == turno)
+        query = db.query(Cardapio).filter(Cardapio.turno == turno)
 
     cardapios = query.all()
     if not cardapios:
