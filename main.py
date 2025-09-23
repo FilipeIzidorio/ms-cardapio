@@ -11,8 +11,7 @@ from schemas import (
 )
 import requests
 
-AUTH_URL = "http://a367af721df9.ngrok-free.app/api/v1/auth/validate-token/"
-
+#AUTH_URL = "http://a367af721df9.ngrok-free.app/api/v1/auth/validate-token/"
 app = FastAPI(
     title="MS1 - Cardápios",
     version="1.0",
@@ -20,42 +19,43 @@ app = FastAPI(
 )
 
 
-@app.middleware("http")
-async def auth_filter(request: Request, call_next):
+
+#@app.middleware("http")
+#async def auth_filter(request: Request, call_next):
     # Rotas que não exigem token
-    rotas_publicas = ["/", "/docs", "/openapi.json"]
-    if request.url.path in rotas_publicas:
-        return await call_next(request)
+ #   rotas_publicas = ["/", "/docs", "/openapi.json"]
+  #  if request.url.path in rotas_publicas:
+        #return await call_next(request)
 
-    token = request.headers.get("Authorization")
-    if not token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token não fornecido"
-        )
+   # token = request.headers.get("Authorization")
+    #if not token:
+     #   raise HTTPException(
+      #      status_code=status.HTTP_401_UNAUTHORIZED,
+        #    detail="Token não fornecido"
+       # )
 
-    try:
+    #try:
         # Faz chamada ao serviço de autenticação
-        headers = {"Authorization": token}
-        response = requests.get(AUTH_URL, headers=headers)
+     #   headers = {"Authorization": token}
+      #  response = requests.get(AUTH_URL, headers=headers)
 
-        if 200 <= response.status_code < 300:
+       # if 200 <= response.status_code < 300:
             # Se quiser, salva as infos do usuário no request.state
-            try:
-                request.state.user = response.json()
-            except Exception:
-                request.state.user = None
-            return await call_next(request)
-        else:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token inválido"
-            )
-    except Exception:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Erro ao validar token"
-        )
+        #    try:
+         #       request.state.user = response.json()
+          #  except Exception:
+           #     request.state.user = None
+            #return await call_next(request)
+        #else:
+         #   raise HTTPException(
+          #      status_code=status.HTTP_401_UNAUTHORIZED,
+           #     detail="Token inválido"
+            #)
+   # except Exception:
+    #    raise HTTPException(
+     #       status_code=status.HTTP_401_UNAUTHORIZED,
+      #      detail="Erro ao validar token"
+       # )
 
 
 
