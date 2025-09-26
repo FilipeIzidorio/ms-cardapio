@@ -27,5 +27,7 @@ Criar cardápio (POST /api/v1/cardapios/):
 }
 
 
+postgresql://postgres:admin@localhost:5432/ms-cardapio
 
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiYWZkYTkzNDllZTE1YzkzOGMxMGRiNWMyNjY0OGI2NTYwM2E0ZDgwZmQ4ZTVlZGE1N2IwNjlhNDk2ZjNhZDRhNzY2ZDg1NmEwNTBiMjE1ZDU0MmY4NWUwNjBjODc5ZDRhMjZhNjE5ZTlhZTc3ZDQ2MjI3Nzk2M2FkYjZkZGJhYTIifQ.ZS-gPmtz56Dp45H13jq4SGxsixywKHkei8jG8XHsbdY
+
+postgresql://dbcardapio_w1xz_user:k6ZzjAQGBYUPwmubQRBFiRcCZgekjvSM@dpg-d39dl0ogjchc73dm9320-a.oregon-postgres.render.com/dbcardapio_w1xz
