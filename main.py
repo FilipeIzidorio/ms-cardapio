@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from db.database import Base, engine
 from routers import cardapio_router
 from middlewares.auth_middleware import auth_filter
+from configs.cors_config import setup_cors
 
 # Criação das tabelas no banco
 Base.metadata.create_all(bind=engine)
@@ -12,7 +13,8 @@ app = FastAPI(
     description="Gestão de cardápios diários integrando com MS-Estoque (Java) por IDs."
 )
 
-# Registrar middleware
+setup_cors(app)
+
 #app.middleware("http")(auth_filter)
 
 # Health check
