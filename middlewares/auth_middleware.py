@@ -5,7 +5,7 @@ AUTH_URL = "https://1736e818cd2a.ngrok-free.app/api/v1/auth/validate-token/"
 
 async def auth_filter(request: Request, call_next):
     """Middleware de autenticação centralizada."""
-    rotas_publicas = ["/", "/docs", "/openapi.json", "/health"]
+    rotas_publicas = ["/", "/api/v1/cardapios/hoje","/docs", "/openapi.json", "/health"]
 
     if request.url.path in rotas_publicas:
         return await call_next(request)

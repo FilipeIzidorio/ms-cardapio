@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.security import APIKeyHeader
 from db.database import Base, engine
 from routers import cardapio_router
 from middlewares.auth_middleware import auth_filter
@@ -15,6 +16,9 @@ app = FastAPI(
 
 setup_cors(app)
 
+
+
+
 app.middleware("http")(auth_filter)
 
 # Health check
@@ -28,4 +32,4 @@ app.include_router(cardapio_router.router)
 # Execução local
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

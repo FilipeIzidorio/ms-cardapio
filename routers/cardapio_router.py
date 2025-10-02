@@ -1,5 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query,Security
 from typing import List, Optional
+
+from fastapi.security import APIKeyHeader
+
 from db.database import get_db
 from models.models import Cardapio, TurnoEnum
 from datetime import date
@@ -12,6 +15,7 @@ from schemas.cardapio_schema import (
     CardapioOut
 )
 from services.estoque_service import validate_ids
+token_header = APIKeyHeader(name="Authorization", auto_error=False)
 
 router = APIRouter()
 BASE_ROUTE = "/api/v1/cardapios"
@@ -26,7 +30,8 @@ BASE_ROUTE = "/api/v1/cardapios"
     status_code=status.HTTP_201_CREATED,
     summary="Criar cardápio"
 )
-def criar_cardapio(cardapio: CardapioCreate, db: Session = Depends(get_db)):
+def criar_cardapio(cardapio: CardapioCreate, db: Session = Depends(get_db),token: str = Security(token_header)):
+    print("Token recebido:", token)
     q = db.query(Cardapio).filter(Cardapio.data == cardapio.data)
     if cardapio.turno is None:
         q = q.filter(Cardapio.turno.is_(None))
@@ -80,7 +85,8 @@ def cardapios_hoje(
 # Atualizar cardápio (PUT)
 # ------------------------------
 @router.put(BASE_ROUTE + "/{id}", response_model=CardapioOut)
-def atualizar_cardapio(id: int, payload: CardapioUpdate, db: Session = Depends(get_db)):
+def atualizar_cardapio(id: int, payload: CardapioUpdate, db: Session = Depends(get_db),token: str = Security(token_header)):
+    print("Token recebido:", token)
     card = db.query(Cardapio).filter(Cardapio.id == id).first()
     if not card:
         raise HTTPException(status_code=404, detail="Cardápio não encontrado")
@@ -112,7 +118,8 @@ def atualizar_cardapio(id: int, payload: CardapioUpdate, db: Session = Depends(g
 # Atualizar cardápio parcialmente (PATCH)
 # ------------------------------
 @router.patch(BASE_ROUTE + "/{id}", response_model=CardapioOut)
-def atualizar_cardapio_parcial(id: int, payload: CardapioPartialUpdate, db: Session = Depends(get_db)):
+def atualizar_cardapio_parcial(id: int, payload: CardapioPartialUpdate, db: Session = Depends(get_db),token: str = Security(token_header)):
+    print("Token recebido:", token)
     card = db.query(Cardapio).filter(Cardapio.id == id).first()
     if not card:
         raise HTTPException(status_code=404, detail="Cardápio não encontrado")
@@ -147,7 +154,8 @@ def atualizar_cardapio_parcial(id: int, payload: CardapioPartialUpdate, db: Sess
 # Listar cardápios
 # ------------------------------
 @router.get(BASE_ROUTE + "/listar", response_model=List[CardapioOut])
-def listar_cardapios(db: Session = Depends(get_db)):
+def listar_cardapios(db: Session = Depends(get_db),token: str = Security(token_header)):
+    print("Token recebido:", token)
     return db.query(Cardapio).all()
 
 
@@ -155,7 +163,8 @@ def listar_cardapios(db: Session = Depends(get_db)):
 # Obter cardápio por ID
 # ------------------------------
 @router.get(BASE_ROUTE + "/{id}", response_model=CardapioOut)
-def obter_cardapio(id: int, db: Session = Depends(get_db)):
+def obter_cardapio(id: int, db: Session = Depends(get_db),token: str = Security(token_header)):
+    print("Token recebido:", token)
     card = db.query(Cardapio).filter(Cardapio.id == id).first()
     if not card:
         raise HTTPException(status_code=404, detail="Cardápio não encontrado")
@@ -166,7 +175,8 @@ def obter_cardapio(id: int, db: Session = Depends(get_db)):
 # Remover cardápio
 # ------------------------------
 @router.delete(BASE_ROUTE + "/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def remover_cardapio(id: int, db: Session = Depends(get_db)):
+def remover_cardapio(id: int, db: Session = Depends(get_db),token: str = Security(token_header)):
+    print("Token recebido:", token)
     card = db.query(Cardapio).filter(Cardapio.id == id).first()
     if not card:
         raise HTTPException(status_code=404, detail="Cardápio não encontrado")
