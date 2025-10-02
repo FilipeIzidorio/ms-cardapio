@@ -1,7 +1,7 @@
 from fastapi import Request, HTTPException, status
 import requests
 
-AUTH_URL = "http://a367af721df9.ngrok-free.app/api/v1/auth/validate-token/"
+AUTH_URL = "https://1736e818cd2a.ngrok-free.app/api/v1/auth/validate-token/"
 
 async def auth_filter(request: Request, call_next):
     """Middleware de autenticação centralizada."""

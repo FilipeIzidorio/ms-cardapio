@@ -15,10 +15,10 @@ app = FastAPI(
 
 setup_cors(app)
 
-#app.middleware("http")(auth_filter)
+app.middleware("http")(auth_filter)
 
 # Health check
-@app.get("/", tags=["Health"])
+@app.get("/health", tags=["Health"])
 def health_check():
     return {"status": "ok", "message": "Microsserviço de cardápios rodando!"}
 
