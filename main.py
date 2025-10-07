@@ -13,7 +13,7 @@ app = FastAPI(
 )
 
 setup_cors(app)
-app.middleware("http")(auth_filter)
+#app.middleware("http")(auth_filter)
 
 
 @app.get("/health", tags=["Health"])
